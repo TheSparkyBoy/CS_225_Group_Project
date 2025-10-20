@@ -16,15 +16,14 @@ public:
 	Segment(int x, int y) {
 		this->x = x;
 		this->y = y;
-		Segment* next = NULL;
+		next = NULL;
 	}
 	void createNewSegment(int x, int y) {
 		if (next != NULL) {
 			next->createNewSegment(x, y);
 		}
 		else {
-			Segment* s = new Segment(x - 1, y);
-			next = s;
+			next = new Segment(x - 1, y);
 		}
 		
 	}
@@ -39,6 +38,7 @@ public:
 	~Segment() {
 		if (next != NULL) {
 			delete next;
+			next = NULL;
 		}
 	}
 	int getX() const { return x; };

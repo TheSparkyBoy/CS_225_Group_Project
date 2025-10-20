@@ -1,4 +1,6 @@
+
 #include "Segment.cpp"
+#include <iostream>
 
 class Snake {
 private:
@@ -7,7 +9,7 @@ private:
 
 public:
 	Snake(int x, int y) {
-		Segment* head = new Segment(x,y);
+		head = new Segment(x,y);
 		length = 1;
 	}
 	void addSegment() {
@@ -17,6 +19,8 @@ public:
 	int getLength() { return length; };
 	~Snake() {
 		delete head;
+		head = NULL;
+		std::cout << "Oops! Your snake ate itself! Length: " << length << ".\n";
 	}
 
 };
