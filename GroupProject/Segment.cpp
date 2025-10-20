@@ -1,5 +1,6 @@
 #include <cstdlib>
-
+#include <iostream>
+using std::cout;
 
 class Segment {
 private:
@@ -18,9 +19,9 @@ public:
 		this->y = y;
 		next = NULL;
 	}
-	void createNewSegment(int x, int y) {
+	void createNewSegment() {
 		if (next != NULL) {
-			next->createNewSegment(x, y);
+			next->createNewSegment();
 		}
 		else {
 			next = new Segment(x - 1, y);
@@ -35,6 +36,30 @@ public:
 		this->y += y;
 		next->updateXY(a, b);
 	}
+	int checkCoords(int a, int b) {
+		int count = 0;
+		if (a == x && b == y)
+			++count;
+		if (next == NULL)
+			return count;
+		else
+			return count + next->checkCoords(a, b);		
+	}
+	bool areCoordsShared() {
+		bool yes = false;
+		if (x == next->getX() && y == next->getY())
+			yes = true;
+		if (next != NULL)
+			return yes || next->areCoordsShared();
+		else
+			return yes;
+	}
+	/*void dispCoords() {
+		cout << "( " << x << ", " << y << " )\n";
+		if (next != NULL)
+			next->dispCoords();
+	} */
+
 	~Segment() {
 		if (next != NULL) {
 			delete next;

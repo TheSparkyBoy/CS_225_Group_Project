@@ -20,19 +20,24 @@ public:
 	void UpdateFrame(const Snake& s) {
 		system("cls");
 		int i, j = 0;
-		for (i = 0; i < h; ++i) {
-			if (i == 0 || i == h - 1) {
-				for (j = 0; j < w; ++j) {
-					if (j == 0 || j == w - 1)
+		for (i = 1; i <= h; ++i) {
+			if (i == 1 || i == h) {
+				for (j = 1; j <= w; ++j) {
+					if (j == 1 || j == w)
 						cout << "|";
 					else
 						cout << "_";
 				}
 				cout << "\n";
 			}
-			for (j = 0; j < w; ++j) {
-				if (j == 0 || j == w - 1)
+			for (j = 1; j <= w; ++j) {
+				if (j == 1 || j == w)
 					cout << "|";
+				else if (j == s.headX() && i == s.headY())
+					cout << "O";
+				else if (s.checkCoords(j,i) == 1) {
+					cout << "o";
+				}
 				else
 					cout << " ";
 			}
