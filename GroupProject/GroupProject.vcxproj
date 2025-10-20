@@ -124,9 +124,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\main.cpp" />
-    <ClCompile Include="..\Segment.cpp" />
-    <ClCompile Include="..\Snake.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Segment.cpp" />
+    <ClCompile Include="Snake.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,12 +1,13 @@
-/****************************************************************************
-* File:   main.cpp
-* Author:   Yunfeng Nie, Konnor Barnes, and Quentin Trull.
-* Purpose:  To run the game of snake.
-* Version:  1.0 Oct 16, 2025
-* Resources: GitHub Copilot.
-*******************************************************************************/
+#include <iostream>
+#include "WindowManager.cpp"
 
 int main() {
-
+	const int width = 80;
+	const int height = 80;
+	Snake s(width/2, height/2);
+	s.addSegment();
+	snkWndw w(width, height);
+	w.UpdateFrame(s);
+	Sleep(1000);
 	return 0;
 }
