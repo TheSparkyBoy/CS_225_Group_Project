@@ -1,7 +1,10 @@
-/*
- * Snake.cpp
- * Implements the snake class and supporting functions to the segments.
- */
+/****************************************************************************
+ * File:   Snake.cpp
+ * Author:   Konnor Barnes, Yunfeng Nie
+ * Purpose:	Implements the snake class and supporting functions to the segments.
+ * Version:  1.0 Oct 22, 2025
+ * Resources: NA
+ *******************************************************************************/
 #include "Snake.hpp"
 
 	// The head is the segment that will be directly controlled by the player. See Segment.cpp for details.

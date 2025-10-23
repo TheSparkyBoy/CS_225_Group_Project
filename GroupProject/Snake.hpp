@@ -1,7 +1,10 @@
-/*
- * Snake.cpp
- * Implements the snake class and supporting functions to the segments.
- */
+/****************************************************************************
+ * File:   Snake.hpp
+ * Author:   Konnor Barnes, Yunfeng Nie
+ * Purpose:	 Snake hpp file defining the Snake class and supporting functions to the segments.
+ * Version:  1.0 Oct 22, 2025
+ * Resources: NA
+ *******************************************************************************/
 #include "Segment.hpp"
 #include <iostream>
 

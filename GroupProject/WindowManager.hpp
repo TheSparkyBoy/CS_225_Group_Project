@@ -1,5 +1,5 @@
 /****************************************************************************
-* File:   WindowsManager.cpp
+* File:   WindowsManager.hpp
 * Author:   Konnor Barnes, Yunfeng Nie
 * Purpose:	Header file for WindowManager class
 * Version:  1.0 Oct 22, 2025
