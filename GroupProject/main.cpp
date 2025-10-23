@@ -1,5 +1,5 @@
 #include <iostream>
-#include "WindowManager.cpp"
+#include "WindowManager.hpp"
 
 int main() {
 	// Initalize Window Size

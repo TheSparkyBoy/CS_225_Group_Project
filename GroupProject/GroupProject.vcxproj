@@ -129,6 +129,11 @@
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Segment.hpp" />
+    <ClInclude Include="Snake.hpp" />
+    <ClInclude Include="WindowManager.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
