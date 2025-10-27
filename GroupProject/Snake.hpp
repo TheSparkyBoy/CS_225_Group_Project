@@ -5,6 +5,9 @@
  * Version:  1.0 Oct 22, 2025
  * Resources: NA
  *******************************************************************************/
+#ifndef SNAKE_HPP
+#define SNAKE_HPP
+
 #include "Segment.hpp"
 #include <iostream>
 
@@ -23,3 +26,5 @@ public:
 	int headY() const;
 	int getLength() const;
 };
+
+#endif

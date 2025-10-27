@@ -1,5 +1,6 @@
 #include <iostream>
 #include "WindowManager.hpp"
+#include "Segment.hpp"
 
 int main() {
 	// Initalize Window Size

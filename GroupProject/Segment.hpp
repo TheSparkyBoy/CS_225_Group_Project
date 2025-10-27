@@ -5,7 +5,8 @@
  * Version:  1.0 Oct 22, 2025
  * Resources: NA
  *******************************************************************************/
-
+#ifndef SEGMENT_HPP
+#define SEGMENT_HPP
  // For NULL ptr
 #include <cstdlib>
 
@@ -44,3 +45,5 @@ public:
 	int getX() const;
 	int getY() const;
 };
+
+#endif

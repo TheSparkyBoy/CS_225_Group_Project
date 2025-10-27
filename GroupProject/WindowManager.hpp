@@ -5,6 +5,10 @@
 * Version:  1.0 Oct 22, 2025
 * Resources: NA
 *******************************************************************************/
+
+#ifndef WINDOWMANAGER_HPP
+#define WINDOWMANAGER_HPP
+
 #include "Snake.hpp"
 #include <iostream>
 #include <Windows.h>
@@ -29,3 +33,5 @@ public:
 	bool UpdateFrame(const Snake& s);
 
 };
+
+#endif
