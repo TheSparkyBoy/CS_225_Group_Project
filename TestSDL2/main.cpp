@@ -364,7 +364,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 
     r.w = r.h = SNAKE_BLOCK_SIZE_IN_PIXELS;
     SDL_SetRenderDrawColor(as->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(as->renderer);
+    SDL_RenderClear(as->renderer); 
 
     /* The coordinate loops iterate i across width and j across height.
      * Only non-empty cells are drawn; we use the per-cell value to decide the
