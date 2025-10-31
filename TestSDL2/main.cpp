@@ -3,23 +3,38 @@
  * represent the state of the game in memory.
  *
  * This code is public domain. Feel free to use it for any purpose!
+ *
+ * Added explanatory comments throughout to describe data layout, bit packing,
+ * game rules, and how SDL main callbacks are used.
  */
 
 #define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
+ /* Game timing and rendering constants */
 #define STEP_RATE_IN_MILLISECONDS  125
 #define SNAKE_BLOCK_SIZE_IN_PIXELS 24
 #define SDL_WINDOW_WIDTH           (SNAKE_BLOCK_SIZE_IN_PIXELS * SNAKE_GAME_WIDTH)
 #define SDL_WINDOW_HEIGHT          (SNAKE_BLOCK_SIZE_IN_PIXELS * SNAKE_GAME_HEIGHT)
 
+/* Logical game grid size (width x height) and derived matrix size */
 #define SNAKE_GAME_WIDTH  24U
 #define SNAKE_GAME_HEIGHT 18U
 #define SNAKE_MATRIX_SIZE (SNAKE_GAME_WIDTH * SNAKE_GAME_HEIGHT)
 
-#define THREE_BITS  0x7U /* ~CHAR_MAX >> (CHAR_BIT - SNAKE_CELL_MAX_BITS) */
+/* Bit/packing helpers:
+ * - Snake cells are stored in a compact bit-packed array to reduce memory.
+ * - Each cell consumes SNAKE_CELL_MAX_BITS bits (3 bits here) and can hold
+ *   up to 8 different values (0..7). We only need 6 values (nothing, 4
+ *   directions, and food).
+ */
+#define THREE_BITS  0x7U /* mask for 3 bits */
 #define SHIFT(x, y) (((x) + ((y) * SNAKE_GAME_WIDTH)) * SNAKE_CELL_MAX_BITS)
+ /* SHIFT(x,y) computes the bit-index for the cell at grid coordinates (x,y).
+  * To access bytes we divide by 8; to access a specific bit offset inside a
+  * byte we use (shift % 8).
+  */
 
 typedef enum
 {
@@ -31,8 +46,10 @@ typedef enum
     SNAKE_CELL_FOOD = 5U
 } SnakeCell;
 
+/* Number of bits used per cell. Must be >= ceil(log2(max cell value + 1)). */
 #define SNAKE_CELL_MAX_BITS 3U /* floor(log2(SNAKE_CELL_FOOD)) + 1 */
 
+/* High-level snake direction enumeration used by input and movement logic */
 typedef enum
 {
     SNAKE_DIR_RIGHT,
@@ -41,6 +58,15 @@ typedef enum
     SNAKE_DIR_DOWN
 } SnakeDirection;
 
+/* Game state - very compact representation:
+ * - `cells` is a packed bit array storing one SnakeCell value per grid cell.
+ * - head/tail positions are stored as chars (sufficient for these grid sizes).
+ * - `next_dir` stores the requested direction for the next step.
+ * - `inhibit_tail_step` is used to grow the snake (when >1, tail does not
+ *   advance that step).
+ * - `occupied_cells` counts how many logical 'occupied' cells the snake/food
+ *   have (used for detecting a full grid).
+ */
 typedef struct
 {
     unsigned char cells[(SNAKE_MATRIX_SIZE * SNAKE_CELL_MAX_BITS) / 8U];
@@ -53,6 +79,9 @@ typedef struct
     unsigned occupied_cells;
 } SnakeContext;
 
+/* Application state passed to SDL callbacks: keeps the renderer/window and
+ * a SnakeContext plus timing information for stepping the game logic.
+ */
 typedef struct
 {
     SDL_Window* window;
@@ -61,6 +90,10 @@ typedef struct
     Uint64 last_step;
 } AppState;
 
+/* Read a SnakeCell value at grid coordinate (x,y).
+ * The value is extracted from the bit-packed `cells` array; to read across
+ * a byte boundary we copy two bytes into a 16-bit `range` and shift/mask.
+ */
 SnakeCell snake_cell_at(const SnakeContext* ctx, char x, char y)
 {
     const int shift = SHIFT(x, y);
@@ -69,12 +102,23 @@ SnakeCell snake_cell_at(const SnakeContext* ctx, char x, char y)
     return (SnakeCell)((range >> (shift % 8)) & THREE_BITS);
 }
 
+/* Helper: set an SDL_FRect's upper-left coordinates for a given cell (x,y).
+ * This computes pixel positions from logical grid coordinates.
+ */
 static void set_rect_xy_(SDL_FRect* r, short x, short y)
 {
     r->x = (float)(x * SNAKE_BLOCK_SIZE_IN_PIXELS);
     r->y = (float)(y * SNAKE_BLOCK_SIZE_IN_PIXELS);
 }
 
+/* Write a SnakeCell value into the packed cells array at (x,y).
+ * - Load the 16-bit range that contains the target bits.
+ * - Clear the target 3-bit field.
+ * - OR in the new value and write the two bytes back.
+ *
+ * Using a 16-bit buffer means we can safely modify values that straddle a
+ * byte boundary without performing per-bit loops.
+ */
 static void put_cell_at_(SnakeContext* ctx, char x, char y, SnakeCell ct)
 {
     const int shift = SHIFT(x, y);
@@ -87,11 +131,16 @@ static void put_cell_at_(SnakeContext* ctx, char x, char y, SnakeCell ct)
     SDL_memcpy(pos, &range, sizeof(range));
 }
 
+/* Returns non-zero when the grid is completely occupied (no empty cells) */
 static int are_cells_full_(SnakeContext* ctx)
 {
     return ctx->occupied_cells == SNAKE_GAME_WIDTH * SNAKE_GAME_HEIGHT;
 }
 
+/* Place a food cell at a random empty location:
+ * - Picks random x/y until an empty cell is found.
+ * - Writes SNAKE_CELL_FOOD into that cell.
+ */
 static void new_food_pos_(SnakeContext* ctx)
 {
     while (true) {
@@ -104,6 +153,16 @@ static void new_food_pos_(SnakeContext* ctx)
     }
 }
 
+/* Initialize snake state:
+ * - Zero the packed cell array.
+ * - Place the head and tail in the center of the board and set the default
+ *   moving direction to RIGHT.
+ * - Seed the board with some food and set occupied_cells to reflect how many
+ *   items are present (used for full-check).
+ *
+ * Note: `inhibit_tail_step` is used so the tail doesn't immediately move for
+ * a number of steps, allowing an initial snake length greater than 1.
+ */
 void snake_initialize(SnakeContext* ctx)
 {
     int i;
@@ -120,6 +179,11 @@ void snake_initialize(SnakeContext* ctx)
     }
 }
 
+/* Request a change of direction for the snake head:
+ * - It rejects commands that would immediately reverse the snake into itself.
+ *   The check compares the requested direction to the stored current head cell
+ *   direction (which is encoded as a SnakeCell).
+ */
 void snake_redir(SnakeContext* ctx, SnakeDirection dir)
 {
     SnakeCell ct = snake_cell_at(ctx, ctx->head_xpos, ctx->head_ypos);
@@ -131,6 +195,10 @@ void snake_redir(SnakeContext* ctx, SnakeDirection dir)
     }
 }
 
+/* Wrap-around helper used for toroidal board behavior:
+ * If an index goes off the left/top it wraps to the opposite side, and same
+ * for right/bottom. Modifies the value in-place.
+ */
 static void wrap_around_(char* val, char max)
 {
     if (*val < 0) {
@@ -141,6 +209,22 @@ static void wrap_around_(char* val, char max)
     }
 }
 
+/* Advance the game state by one step:
+ * - Moves the tail forward (unless inhibited by growth).
+ * - Moves the head forward according to ctx->next_dir, with wrap-around.
+ * - Detects self-collision: if head moves onto a body cell (not NOTHING or
+ *   FOOD) the game resets.
+ * - Places the direction marker in the previous head cell to record snake
+ *   body orientation (used to advance the tail later).
+ * - If food was consumed, spawn new food, increase growth inhibition so the
+ *   tail doesn't move on the next step, and update occupied count.
+ *
+ * Important details:
+ * - Cells contain directional markers in body segments (SRIGHT, SUP, ...)
+ *   so the tail knows which way to move forward when it advances.
+ * - `inhibit_tail_step` temporarily prevents the tail from moving, which
+ *   implements growth when food is eaten.
+ */
 void snake_step(SnakeContext* ctx)
 {
     const SnakeCell dir_as_cell = (SnakeCell)(ctx->next_dir + 1);
@@ -193,22 +277,36 @@ void snake_step(SnakeContext* ctx)
     /* Collisions */
     ct = snake_cell_at(ctx, ctx->head_xpos, ctx->head_ypos);
     if (ct != SNAKE_CELL_NOTHING && ct != SNAKE_CELL_FOOD) {
+        /* collision with self -> reset game */
         snake_initialize(ctx);
         return;
     }
+    /* Mark previous head cell with the direction we moved, this becomes body. */
     put_cell_at_(ctx, prev_xpos, prev_ypos, dir_as_cell);
+    /* Mark new head cell as part of head (we use same direction marker for head
+     * drawing; head is drawn specially in the renderer later).
+     */
     put_cell_at_(ctx, ctx->head_xpos, ctx->head_ypos, dir_as_cell);
     if (ct == SNAKE_CELL_FOOD) {
         if (are_cells_full_(ctx)) {
+            /* Board full -> reset game */
             snake_initialize(ctx);
             return;
         }
         new_food_pos_(ctx);
-        ++ctx->inhibit_tail_step;
+        ++ctx->inhibit_tail_step; /* grow: skip advancing tail next time */
         ++ctx->occupied_cells;
     }
 }
 
+/* Handle keyboard input mapped to game behavior:
+ * - Q or ESC quits the app.
+ * - R restarts the game.
+ * - Arrow keys request a direction change for the snake (validated by snake_redir).
+ *
+ * This returns SDL_AppResult so SDL's main-callback system knows whether to
+ * continue or terminate.
+ */
 static SDL_AppResult handle_key_event_(SnakeContext* ctx, SDL_Scancode key_code)
 {
     switch (key_code) {
@@ -239,6 +337,13 @@ static SDL_AppResult handle_key_event_(SnakeContext* ctx, SDL_Scancode key_code)
     return SDL_APP_CONTINUE;
 }
 
+/* SDL main-loop iterate callback:
+ * - This is called repeatedly by SDL's callback-driven "main" implementation.
+ * - It advances game logic as many times as necessary to "catch up" with the
+ *   wall-clock time (so slow frames don't drop game steps).
+ * - It clears the renderer, draws all non-empty cells (food blue, body green),
+ *   then draws the head in yellow, and presents the frame.
+ */
 SDL_AppResult SDL_AppIterate(void* appstate)
 {
     AppState* as = (AppState*)appstate;
@@ -260,6 +365,12 @@ SDL_AppResult SDL_AppIterate(void* appstate)
     r.w = r.h = SNAKE_BLOCK_SIZE_IN_PIXELS;
     SDL_SetRenderDrawColor(as->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(as->renderer);
+
+    /* The coordinate loops iterate i across width and j across height.
+     * Only non-empty cells are drawn; we use the per-cell value to decide the
+     * draw color (food vs body). The head is drawn afterwards to ensure it
+     * appears over the body.
+     */
     for (i = 0; i < SNAKE_GAME_WIDTH; i++) {
         for (j = 0; j < SNAKE_GAME_HEIGHT; j++) {
             ct = snake_cell_at(ctx, i, j);
@@ -273,6 +384,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
             SDL_RenderFillRect(as->renderer, &r);
         }
     }
+    /* Draw head after body so it is visually distinct. */
     SDL_SetRenderDrawColor(as->renderer, 255, 255, 0, SDL_ALPHA_OPAQUE); /*head*/
     set_rect_xy_(&r, ctx->head_xpos, ctx->head_ypos);
     SDL_RenderFillRect(as->renderer, &r);
@@ -280,6 +392,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
     return SDL_APP_CONTINUE;
 }
 
+/* Extended metadata for the SDL application (optional) */
 static const struct
 {
     const char* key;
@@ -292,6 +405,14 @@ static const struct
     { SDL_PROP_APP_METADATA_TYPE_STRING, "game" }
 };
 
+/* SDL_AppInit: called once at program start (SDL main-callback).
+ * - Sets metadata, initializes the video subsystem.
+ * - Allocates an AppState and creates the window/renderer.
+ * - Initializes the snake and sets the last_step timestamp.
+ *
+ * Returns SDL_APP_CONTINUE to run the app, SDL_APP_FAILURE on fatal error,
+ * SDL_APP_SUCCESS to quit immediately.
+ */
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 {
     size_t i;
@@ -328,6 +449,11 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
     return SDL_APP_CONTINUE;
 }
 
+/* SDL_AppEvent: called by SDL when events happen.
+ * - Translates SDL events into game actions (quit, key presses).
+ * - The keyboard handling delegates to handle_key_event_ which may request
+ *   program termination (SDL_APP_SUCCESS) or continue.
+ */
 SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
     SnakeContext* ctx = &((AppState*)appstate)->snake_ctx;
@@ -340,6 +466,9 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
     return SDL_APP_CONTINUE;
 }
 
+/* SDL_AppQuit: cleanup when the application exits.
+ * - Destroys renderer/window and frees the AppState memory.
+ */
 void SDL_AppQuit(void* appstate, SDL_AppResult result)
 {
     if (appstate != NULL) {
