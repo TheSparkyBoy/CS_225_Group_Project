@@ -13,7 +13,9 @@ int main() {
 	snkWndw w(width, height);
 
 	//update the frame by printing the snake in the frame
-	w.UpdateFrame(s);
-	
+	for (int i = 0; i < 20; ++i) {
+		s.addSegment();
+		w.UpdateFrame(s);
+	}
 	return 0;
 }

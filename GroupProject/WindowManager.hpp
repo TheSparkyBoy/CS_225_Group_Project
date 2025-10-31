@@ -5,9 +5,11 @@
 * Version:  1.0 Oct 22, 2025
 * Resources: NA
 *******************************************************************************/
+#pragma once
 #include "Snake.hpp"
 #include <iostream>
 #include <Windows.h>
+#include <cstdlib>
 
 using std::cout;
 

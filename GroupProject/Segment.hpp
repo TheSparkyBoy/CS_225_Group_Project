@@ -7,6 +7,7 @@
  *******************************************************************************/
 
  // For NULL ptr
+#pragma once
 #include <cstdlib>
 
 class Segment {
