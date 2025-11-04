@@ -86,8 +86,6 @@ typedef struct
 {
     SDL_Window* window;
     SDL_Renderer* renderer;
-    SnakeContext snake_ctx;
-    Uint64 last_step;
 } AppState;
 
 /* Read a SnakeCell value at grid coordinate (x,y).
