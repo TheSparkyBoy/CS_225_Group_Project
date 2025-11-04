@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4668f957-2f7f-45ad-8a67-37d75fceed1f}</ProjectGuid>
-    <RootNamespace>TestCleanSolution</RootNamespace>
+    <ProjectGuid>{35717a65-3543-45e7-a0e2-71380de9aca9}</ProjectGuid>
+    <RootNamespace>BetterSnake</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -128,7 +128,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="SDL-release-3.2.26\VisualC\SDL\SDL.vcxproj">
+    <ProjectReference Include="..\TestCleanSolution\SDL-release-3.2.26\VisualC\SDL\SDL.vcxproj">
       <Project>{81ce8daf-ebb2-4761-8e45-b71abcca8c68}</Project>
     </ProjectReference>
   </ItemGroup>
