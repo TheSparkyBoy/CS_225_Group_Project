@@ -6,21 +6,21 @@
  * Resources: NA
  *******************************************************************************/
 #pragma once
+#ifndef SNAKE_HPP
+#define SNAKE_HPP
 #include "Segment.hpp"
 #include <iostream>
 
-class Snake {
+class Snake: public Segment {
 private:
 	// The head is the segment that will be directly controlled by the player. See Segment.cpp for details.
-	Segment* head = NULL;
 	int length; //# of Segments in the Snake.
 
 public:
 	Snake(int x, int y);
-	void addSegment();
+	void createNewSegment();
 	~Snake();
-	int checkCoords(int a, int b) const;
-	int headX() const;
-	int headY() const;
 	int getLength() const;
 };
+
+#endif

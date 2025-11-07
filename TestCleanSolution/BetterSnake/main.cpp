@@ -1,7 +1,7 @@
 #define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include "Snake.cpp"
+#include "Snake.hpp"
 
 
 typedef struct
@@ -9,6 +9,13 @@ typedef struct
     SDL_Window* window;
     SDL_Renderer* renderer;
 } AppState;
+
+int main() {
+    using std::cout;
+    cout << "Can you hear me?\n";
+    return 0;
+}
+
 
 
 

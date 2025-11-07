@@ -1,18 +1,19 @@
 /****************************************************************************
  * File:   Segment.cpp
- * Author:   Konnor Barnes, Yunfeng Nie
+ * Author:   Konnor Barnes
  * Purpose:	 Implements the Segment Class
  * Version:  1.0 Oct 22, 2025
  * Resources: NA
  *******************************************************************************/
 
 #include "Segment.hpp"
-
+Segment* next = NULL;
 void Segment::updateXY(int a, int b) {
-	next->updateXY(x, y); //Call on the next segment to move to this segment's coordinates
-
+	if (next != NULL)
+		next->updateXY(x, y); //Call on the next segment to move to this segment's coordinates
 	x = a; //Move up to the given coordinates.
 	y = b;
+	
 }
 
 Segment::Segment(int x, int y) {

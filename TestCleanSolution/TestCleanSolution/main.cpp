@@ -86,6 +86,8 @@ typedef struct
 {
     SDL_Window* window;
     SDL_Renderer* renderer;
+    SnakeContext snake_ctx;
+    Uint64 last_step;
 } AppState;
 
 /* Read a SnakeCell value at grid coordinate (x,y).
@@ -322,12 +324,15 @@ static SDL_AppResult handle_key_event_(SnakeContext* ctx, SDL_Scancode key_code)
         snake_redir(ctx, SNAKE_DIR_RIGHT);
         break;
     case SDL_SCANCODE_UP:
+    case SDL_SCANCODE_W:
         snake_redir(ctx, SNAKE_DIR_UP);
         break;
     case SDL_SCANCODE_LEFT:
+    case SDL_SCANCODE_A:
         snake_redir(ctx, SNAKE_DIR_LEFT);
         break;
     case SDL_SCANCODE_DOWN:
+    case SDL_SCANCODE_S:
         snake_redir(ctx, SNAKE_DIR_DOWN);
         break;
     default:
@@ -377,9 +382,9 @@ SDL_AppResult SDL_AppIterate(void* appstate)
                 continue;
             set_rect_xy_(&r, i, j);
             if (ct == SNAKE_CELL_FOOD)
-                SDL_SetRenderDrawColor(as->renderer, 80, 80, 255, SDL_ALPHA_OPAQUE);
+                SDL_SetRenderDrawColor(as->renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
             else /* body */
-                SDL_SetRenderDrawColor(as->renderer, 0, 128, 0, SDL_ALPHA_OPAQUE);
+                SDL_SetRenderDrawColor(as->renderer, 0, 128, 128, SDL_ALPHA_OPAQUE);
             SDL_RenderFillRect(as->renderer, &r);
         }
     }

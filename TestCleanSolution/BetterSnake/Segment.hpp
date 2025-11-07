@@ -13,10 +13,11 @@
 
 class Segment {
 private:
-	Segment* next = NULL; //Points to the next segment on the snake. 'Tail' segment points to NULL.
+	
 	int x;
 	int y;
 protected: // Only to be called by one segment on another segment
+	Segment* next; //Points to the next segment on the snake. 'Tail' segment points to NULL.
 	/* Function: updateXY
 	 * Purpose: Move the next segment's location to this segment's location
 	 * Inputs: New location (a,b) for the called segment = former location of the calling segment.
@@ -28,7 +29,7 @@ public:
 	/* Function: CreateNewSegment
 	 * Purpose: create a new Segment at the end of the snake.
 	 */
-	void createNewSegment();
+	virtual void createNewSegment();
 	/* Function: addXY
 	 * Purpose: move the head segment in one direction at a time
 	 * Inputs: (x,y) coordinates to add, x: [-1,1], y: [-1,1]
