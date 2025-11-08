@@ -7,6 +7,7 @@
  *******************************************************************************/
 
 #include "Segment.hpp"
+
 Segment* next = NULL;
 void Segment::updateXY(int a, int b) {
 	if (next != NULL)
