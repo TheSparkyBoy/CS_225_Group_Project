@@ -5,7 +5,7 @@
  * Version:  1.0 Oct 22, 2025
  * Resources: NA
  *******************************************************************************/
-#ifndef SEGMENT_HPP
+#pragma once
 #define SEGMENT_HPP
  // For NULL ptr
 #pragma once
@@ -46,5 +46,3 @@ public:
 	int getX() const;
 	int getY() const;
 };
-
-#endif

@@ -1,8 +1,20 @@
+/****************************************************************************
+ * File:	Snake.cpp
+ * Author:  Yunfeng Nie, Konnor Barnes
+ * Purpose:	Implements the snake class and supporting functions to the segments.
+ * Version:  1.0 Nov 8, 2025
+ * Resources: NA
+ *******************************************************************************/
+
 #define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #pragma	once
 #include "Snake.hpp"
+#include "Fruit.hpp"
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL.h>
+#include <vector>
+
+using namespace std;
 
 #define WIDTH 20
 #define HEIGHT 20
@@ -12,9 +24,11 @@ typedef struct {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	Snake* s;
+	vector <Fruit> f;
 } Appstate;
 
 SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
+	srand(time(NULL));
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK))
 		return SDL_APP_FAILURE;
 
@@ -33,6 +47,7 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 	as->s = new Snake(WIDTH / 2, HEIGHT / 2);
 	as->s->createNewSegment();
 	as->s->createNewSegment();
+
 	return SDL_APP_CONTINUE;
 }
 
@@ -84,6 +99,18 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	SDL_FRect r;
 	r.w = r.h = GRID_SZ;
 	int sfill;
+	int numFruits = rand() % 5; //0,1,2 fruits per iteration
+
+	//Randomly add fruits
+	for(int i = 0; i < numFruits; ++i) {
+		if (as->f.size() <= numFruits) {
+			as->f.push_back(Fruit(WIDTH, HEIGHT, *as->s, 1, rand()%255 + 1, rand()%255 + 1, rand()%255 + 1, SDL_ALPHA_OPAQUE));
+		}
+		else {
+			break;
+		}
+	}
+
 	SDL_SetRenderDrawColor(as->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(as->renderer);
 
@@ -106,8 +133,17 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 			if (sfill == 1) {
 				SDL_SetRenderDrawColor(as->renderer, 0, 128, 128, SDL_ALPHA_OPAQUE);
 			}
+
 			SDL_RenderFillRect(as->renderer, &r);
 		}
+	}
+
+	//Draw fruits
+	for (const auto& fruit : as->f) {
+		r.x = float(fruit.getX() * GRID_SZ);
+		r.y = float(fruit.getY() * GRID_SZ);
+		SDL_SetRenderDrawColor(as->renderer, fruit.getRGBA(0), fruit.getRGBA(1), fruit.getRGBA(2), fruit.getRGBA(3));
+		SDL_RenderFillRect(as->renderer, &r);
 	}
 
 	//Draw head segment
