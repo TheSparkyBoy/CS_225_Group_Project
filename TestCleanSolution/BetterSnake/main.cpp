@@ -28,9 +28,11 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 	if (!SDL_CreateWindowAndRenderer("Better Snake", WIDTH * GRID_SZ, HEIGHT * GRID_SZ, 0, &as->window, &as->renderer))
 		return SDL_APP_FAILURE;
 
-	//SDL_SetRenderLogicalPresentation(as->renderer, WIDTH * GRID_SZ, HEIGHT * GRID_SZ, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+	SDL_SetRenderLogicalPresentation(as->renderer, WIDTH * GRID_SZ, HEIGHT * GRID_SZ, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 	as->s = new Snake(WIDTH / 2, HEIGHT / 2);
+	as->s->createNewSegment();
+	as->s->createNewSegment();
 	return SDL_APP_CONTINUE;
 }
 
@@ -107,6 +109,13 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 			SDL_RenderFillRect(as->renderer, &r);
 		}
 	}
+
+	//Draw head segment
+	r.x = float(as->s->getX() * GRID_SZ);
+	r.y = float(as->s->getY() * GRID_SZ);
+	SDL_SetRenderDrawColor(as->renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderFillRect(as->renderer, &r);
+
 	SDL_RenderPresent(as->renderer);
 	return SDL_APP_CONTINUE;
 }

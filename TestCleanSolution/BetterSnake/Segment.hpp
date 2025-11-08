@@ -13,7 +13,6 @@
 
 class Segment {
 private:
-	
 	int x;
 	int y;
 protected: // Only to be called by one segment on another segment

@@ -6,8 +6,6 @@
  * Resources: NA
  *******************************************************************************/
 #pragma once
-#ifndef SNAKE_HPP
-#define SNAKE_HPP
 #include "Segment.hpp"
 #include <iostream>
 
@@ -22,5 +20,3 @@ public:
 	~Snake();
 	int getLength() const;
 };
-
-#endif
