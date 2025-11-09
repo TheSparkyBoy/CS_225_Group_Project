@@ -58,6 +58,7 @@ SDL_AppResult key_press(Snake* s, SDL_Scancode key) {
 	case SDL_SCANCODE_Q:
 		return SDL_APP_SUCCESS;
 	case SDL_SCANCODE_R:
+		//add reset functionality later
 		break;
 	case SDL_SCANCODE_RIGHT:
 	case SDL_SCANCODE_D:
@@ -117,7 +118,9 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 
 			//If at this coordinate the are more than one segment, then game ends
 			if (sfill > 1) {
-				return SDL_APP_SUCCESS;
+				SDL_SetRenderDrawColor(as->renderer, 255, 0, 0, 5);
+				SDL_RenderClear(as->renderer);
+				SDL_RenderPresent(as->renderer);
 			}
 			if (sfill == 0) {
 				//Nothing to draw
