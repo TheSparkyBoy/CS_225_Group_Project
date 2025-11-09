@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * File:	Snake.cpp
  * Author:  Yunfeng Nie, Konnor Barnes
  * Purpose:	Implements the snake class and supporting functions to the segments.
@@ -19,12 +19,13 @@ using namespace std;
 #define WIDTH 20
 #define HEIGHT 20
 #define GRID_SZ 24
+#define MAX_FRUITS 10
 
 typedef struct {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	Snake* s;
-	vector <Fruit> f;
+	vector<Fruit> f;
 } Appstate;
 
 SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
@@ -32,7 +33,7 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK))
 		return SDL_APP_FAILURE;
 
-	Appstate* as = (Appstate*)(SDL_calloc(1, sizeof(Appstate)));
+	Appstate* as = new Appstate;
 	if (!as) {
 		return SDL_APP_FAILURE;
 	}
@@ -64,7 +65,7 @@ SDL_AppResult key_press(Snake* s, SDL_Scancode key) {
 		break;
 	case SDL_SCANCODE_DOWN:
 	case SDL_SCANCODE_S:
-		s->addXY(0, -1);
+		s->addXY(0, 1);
 		break;
 	case SDL_SCANCODE_LEFT:
 	case SDL_SCANCODE_A:
@@ -72,7 +73,7 @@ SDL_AppResult key_press(Snake* s, SDL_Scancode key) {
 		break;
 	case SDL_SCANCODE_UP:
 	case SDL_SCANCODE_W:
-		s->addXY(0, 1);
+		s->addXY(0, -1);
 		break;
 	}
 	return SDL_APP_CONTINUE;
@@ -99,16 +100,11 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	SDL_FRect r;
 	r.w = r.h = GRID_SZ;
 	int sfill;
-	int numFruits = rand() % 5; //0,1,2 fruits per iteration
+	int numFruits = rand() % MAX_FRUITS;
 
 	//Randomly add fruits
-	for(int i = 0; i < numFruits; ++i) {
-		if (as->f.size() <= numFruits) {
-			as->f.push_back(Fruit(WIDTH, HEIGHT, *as->s, 1, rand()%255 + 1, rand()%255 + 1, rand()%255 + 1, SDL_ALPHA_OPAQUE));
-		}
-		else {
-			break;
-		}
+	if (as->f.size() < numFruits) {
+		as->f.push_back(Fruit(WIDTH, HEIGHT, *as->s, 1, rand()%255 + 1, rand()%255 + 1, rand()%255 + 1, SDL_ALPHA_OPAQUE));
 	}
 
 	SDL_SetRenderDrawColor(as->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
@@ -139,11 +135,19 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	}
 
 	//Draw fruits
-	for (const auto& fruit : as->f) {
+	for (int i = 0; i < as->f.size(); ++i) {
+		Fruit& fruit = as->f[i];
 		r.x = float(fruit.getX() * GRID_SZ);
 		r.y = float(fruit.getY() * GRID_SZ);
 		SDL_SetRenderDrawColor(as->renderer, fruit.getRGBA(0), fruit.getRGBA(1), fruit.getRGBA(2), fruit.getRGBA(3));
 		SDL_RenderFillRect(as->renderer, &r);
+		if (fruit.getX() == as->s->getX() && fruit.getY() == as->s->getY()) {
+			//Snake eats the fruit
+			as->s->createNewSegment();
+			//Remove the fruit from the vector
+			as->f.erase(as->f.begin() + i);
+			--i; // Decrement i to account for the removed fruit
+		}
 	}
 
 	//Draw head segment
@@ -153,6 +157,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	SDL_RenderFillRect(as->renderer, &r);
 
 	SDL_RenderPresent(as->renderer);
+	SDL_Delay(200); //Control speed of the game
 	return SDL_APP_CONTINUE;
 }
 
@@ -161,7 +166,6 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result) {
 		Appstate* as = static_cast<Appstate*>(appstate);
 		SDL_DestroyRenderer(as->renderer);
 		SDL_DestroyWindow(as->window);
-		delete(as->s);
-		SDL_free(as);
+		delete(as);
 	}
 }
