@@ -23,12 +23,25 @@ Segment::Segment(int x, int y) {
 	next = NULL;
 }
 
-void Segment::createNewSegment() {
+void Segment::createNewSegment(int dir) {
 	if (next != NULL) { //If this is not the tail of the snake
-		next->createNewSegment(); // Call this function on the next segment
+		next->createNewSegment(dir); // Call this function on the next segment
 	} 
 	else { //By the time we get here, we have reached the end of the snake
-		next = new Segment(x - 1, y); //Create a new segment next to the tail segment. That segment becomes the new tail.
+		switch (dir) {
+		case UP:
+			next = new Segment(x, y - 1);
+			break;
+		case RIGHT:
+			next = new Segment(x - 1, y);
+			break;
+		case DOWN:
+			next = new Segment(x, y + 1);
+			break;
+		case LEFT:
+			next = new Segment(x + 1, y);
+			break;
+		}
 	}
 		
 }
@@ -50,6 +63,17 @@ int Segment::checkCoords(int a, int b) {
 		return count; // Stop when there are no more segments
 	else
 		return count + next->checkCoords(a, b); //check the next segment, return the total # of segments at this location.
+}
+bool Segment::outOfBounds(int width, int height) {
+	bool isOut = false;
+	if (x < 0 || x >= width)
+		isOut = true;
+	if (y < 0 || y >= height)
+		isOut = true;
+	if (isOut)
+		return isOut;
+	if (next != NULL)
+		return isOut || next->outOfBounds(width, height);
 }
 	
 Segment::~Segment() {

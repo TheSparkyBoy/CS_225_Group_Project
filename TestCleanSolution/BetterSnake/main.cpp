@@ -53,31 +53,36 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 }
 
 SDL_AppResult key_press(Snake* s, SDL_Scancode key) {
+	bool collision = false;
 	switch (key) {
 	case SDL_SCANCODE_ESCAPE:
 	case SDL_SCANCODE_Q:
 		return SDL_APP_SUCCESS;
 	case SDL_SCANCODE_R:
-		//add reset functionality later
+		delete s;
+		s = new Snake(WIDTH / 2, HEIGHT / 2);
 		break;
 	case SDL_SCANCODE_RIGHT:
 	case SDL_SCANCODE_D:
-		s->addXY(1, 0);
+		collision = s->moveSnake(RIGHT, WIDTH, HEIGHT);
 		break;
 	case SDL_SCANCODE_DOWN:
 	case SDL_SCANCODE_S:
-		s->addXY(0, 1);
+		collision = s->moveSnake(DOWN, WIDTH, HEIGHT);
 		break;
 	case SDL_SCANCODE_LEFT:
 	case SDL_SCANCODE_A:
-		s->addXY(-1, 0);
+		collision = s->moveSnake(LEFT, WIDTH, HEIGHT);
 		break;
 	case SDL_SCANCODE_UP:
 	case SDL_SCANCODE_W:
-		s->addXY(0, -1);
+		collision = s->moveSnake(UP, WIDTH, HEIGHT);
 		break;
 	}
-	return SDL_APP_CONTINUE;
+	if (collision == true)
+		return SDL_APP_SUCCESS;
+	else
+		return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppEvent(void* apstate, SDL_Event* event) {

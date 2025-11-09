@@ -11,6 +11,13 @@
 #pragma once
 #include <cstdlib>
 
+enum {
+	UP,
+	RIGHT,
+	DOWN,
+	LEFT,
+};
+
 class Segment {
 private:
 	int x;
@@ -28,7 +35,7 @@ public:
 	/* Function: CreateNewSegment
 	 * Purpose: create a new Segment at the end of the snake.
 	 */
-	virtual void createNewSegment();
+	virtual void createNewSegment(int dir);
 	/* Function: addXY
 	 * Purpose: move the head segment in one direction at a time
 	 * Inputs: (x,y) coordinates to add, x: [-1,1], y: [-1,1]
@@ -41,6 +48,8 @@ public:
 	 */
 	int checkCoords(int a, int b);
 	//Should iterate down the linked list and free all allocated memory.
+
+	bool outOfBounds(int width, int height);
 	~Segment();
 	//Getter functions
 	int getX() const;

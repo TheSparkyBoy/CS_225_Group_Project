@@ -9,14 +9,18 @@
 #include "Segment.hpp"
 #include <iostream>
 
+
+
 class Snake: public Segment {
 private:
 	// The head is the segment that will be directly controlled by the player. See Segment.cpp for details.
 	int length; //# of Segments in the Snake.
+	int direction;
 
 public:
 	Snake(int x, int y);
 	void createNewSegment();
+	bool moveSnake(int dir, int w, int h);
 	~Snake();
 	int getLength() const;
 };
