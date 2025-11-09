@@ -10,7 +10,6 @@
 #pragma	once
 #include "Snake.hpp"
 #include "Fruit.hpp"
-#include "GameOver.hpp"
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL.h>
 #include <vector>
@@ -21,14 +20,12 @@ using namespace std;
 #define HEIGHT 20
 #define GRID_SZ 24
 #define MAX_FRUITS 10
-#define GAME_SPEED 200 //ms
 
 typedef struct {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	Snake* s;
 	vector<Fruit> f;
-	GameOver go;
 } Appstate;
 
 SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
@@ -131,8 +128,6 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 			r.y = float(j * GRID_SZ);
 			if (sfill == 0 && as->s->getDirection() == STOP) {
 				SDL_SetRenderDrawColor(as->renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
-				//Game Over call game over procedures
-				as->go.recordToFile(as->s->getLength());
 			}
 			else {
 				SDL_SetRenderDrawColor(as->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
@@ -168,7 +163,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	SDL_RenderFillRect(as->renderer, &r);
 
 	SDL_RenderPresent(as->renderer);
-	SDL_Delay(GAME_SPEED); //Control speed of the game
+	SDL_Delay(200); //Control speed of the game
 	return SDL_APP_CONTINUE;
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  * File:   Snake.cpp
- * Author:   Konnor Barnes
+ * Author:   Konnor Barnes, Yunfeng Nie
  * Purpose:	Implements the snake class and supporting functions to the segments.
  * Version:  1.0 Oct 22, 2025
  * Resources: NA
@@ -10,7 +10,7 @@
 	// The head is the segment that will be directly controlled by the player. See Segment.cpp for details.
 	int length; //# of Segments in the Snake.
 
-	Snake::Snake(int x, int y):Segment(x,y) {
+	Snake::Snake(int x, int y): Segment(x,y) {
 		length = 1;
 		direction = RIGHT;
 	}
@@ -26,13 +26,8 @@
 
 	}
 
-	bool Snake::moveSnake(int dir,int w, int h) {
+	bool Snake::moveSnake(int w, int h) {
 		bool hasCollided = false;
-		if (direction % 2 == dir % 2) {}
-			// If the current direction is equal to the current direction or reverse, do nothing
-		else {
-			direction = dir;
-		}
 		switch (direction) {
 		case UP:
 			addXY(0, -1);
@@ -45,6 +40,9 @@
 			break;
 		case LEFT:
 			addXY(-1, 0);
+			break;
+		case STOP:
+			//Nothing happens, snake doesn't move.
 			break;
 		}
 		
@@ -62,7 +60,15 @@
 	int Snake::getLength() const { return length; }
 
 	void Snake::setDirection(int dir) {
-		direction = dir;
+		if (dir % 2 == direction % 2) {
+			direction = direction;
+		}
+		else {
+			direction = dir;
+		}
+		if (dir == STOP) {
+			direction = STOP;
+		}
 	}
 
 	int Snake::getDirection() const {

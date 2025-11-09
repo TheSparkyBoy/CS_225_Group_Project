@@ -16,6 +16,7 @@ enum {
 	RIGHT,
 	DOWN,
 	LEFT,
+	STOP
 };
 
 class Segment {

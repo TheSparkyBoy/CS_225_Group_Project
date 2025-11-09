@@ -20,7 +20,7 @@ private:
 public:
 	Snake(int x, int y);
 	void createNewSegment();
-	bool moveSnake(int dir, int w, int h);
+	bool moveSnake(int w, int h);
 	~Snake();
 	int getLength() const;
 	void setDirection(int dir);
