@@ -3,74 +3,90 @@
  * Author:   Konnor Barnes, Yunfeng Nie
  * Purpose:	Implements the snake class and supporting functions to the segments.
  * Version:  1.0 Oct 22, 2025
- * Resources: NA
+ * Resources: GitHub Copilot for comment generation
  *******************************************************************************/
 #include "Snake.hpp"
 
-	// The head is the segment that will be directly controlled by the player. See Segment.cpp for details.
-	int length; //# of Segments in the Snake.
+// NOTE: length and direction are member variables of Snake declared in Snake.hpp.
+// The implementation uses the Segment linked-list behavior inherited from Segment.
 
-	Snake::Snake(int x, int y): Segment(x,y) {
-		length = 1;
-		direction = RIGHT;
+Snake::Snake(int x, int y): Segment(x,y) {
+	// Start with single-segment snake (the head)
+	length = 1;
+	direction = RIGHT; // default starting direction
+}
+
+// Append a new segment to the tail of the snake.
+// This increments the logical length and either delegates to the existing
+// tail or creates the first tail segment adjacent to current tail.
+void Snake::createNewSegment() {
+	++length;
+	if (next != NULL) { // If this is not the tail of the snake, propagate
+		next->createNewSegment(direction); // Call this function on the next segment
+	}
+	else { // Reached tail: place a new segment immediately behind the tail based on direction
+		// Place new tail one cell behind current tail position
+		next = new Segment(getX() - 1, this->getY());
+	}
+}
+
+// Move the snake one step in the current direction and detect collisions.
+// Returns true if the snake collided with itself or went out of bounds.
+bool Snake::moveSnake(int w, int h) {
+	bool hasCollided = false;
+
+	// Move according to direction enum
+	switch (direction) {
+	case UP:
+		addXY(0, -1);
+		break;
+	case RIGHT:
+		addXY(1, 0);
+		break;
+	case DOWN:
+		addXY(0, 1);
+		break;
+	case LEFT:
+		addXY(-1, 0);
+		break;
+	case STOP:
+		// Nothing happens when stopped.
+		break;
 	}
 
-	void Snake::createNewSegment() {
-		++length;
-		if (next != NULL) { //If this is not the tail of the snake
-			next->createNewSegment(direction); // Call this function on the next segment
-		}
-		else { //By the time we get here, we have reached the end of the snake
-			next = new Segment(getX() - 1, this->getY()); //Create a new segment next to the tail segment. That segment becomes the new tail.
-		}
-
+	// If more than one segment occupies the head coordinate it's a self-collision.
+	if (checkCoords(getX(), getY()) > 1) {
+		hasCollided = true;
 	}
+	else
+		// Otherwise check for out-of-bounds
+		hasCollided = outOfBounds(w, h);
 
-	bool Snake::moveSnake(int w, int h) {
-		bool hasCollided = false;
-		switch (direction) {
-		case UP:
-			addXY(0, -1);
-			break;
-		case RIGHT:
-			addXY(1, 0);
-			break;
-		case DOWN:
-			addXY(0, 1);
-			break;
-		case LEFT:
-			addXY(-1, 0);
-			break;
-		case STOP:
-			//Nothing happens, snake doesn't move.
-			break;
-		}
-		
-		if (checkCoords(getX(), getY()) > 1) {
-			hasCollided = true;
-		}
-		else 
-			hasCollided = outOfBounds(w, h);
-		return hasCollided;
+	return hasCollided;
+}
+
+Snake::~Snake() {
+	// Print score on destruction (this is the current behavior)
+	std::cout << "Oops! Your snake ate itself! Length: " << length << ".\n";
+}
+
+int Snake::getLength() const { return length; }
+
+// setDirection enforces simple rules:
+// - STOP overrides everything
+// - cannot reverse direction immediately (prevents 180-degree turn)
+void Snake::setDirection(int dir) {
+	if (dir == STOP || direction == STOP) {
+		direction = STOP;
+	} else if (dir % 2 == direction % 2) {
+		// same axis (e.g. LEFT/RIGHT or UP/DOWN) => ignore to prevent reversing into itself
+		direction = direction;
 	}
-
-	Snake::~Snake() {
-		std::cout << "Oops! Your snake ate itself! Length: " << length << ".\n"; // Print score statement.
+	else {
+		direction = dir;
 	}
-	int Snake::getLength() const { return length; }
+}
 
-	void Snake::setDirection(int dir) {
-		if (dir == STOP || direction == STOP) {
-			direction = STOP;
-		}else if (dir % 2 == direction % 2) {
-			direction = direction;
-		}
-		else {
-			direction = dir;
-		}
-
-	}
-
-	int Snake::getDirection() const {
-		return direction;
-	}
+int Snake::getDirection() const {
+	return direction;
+}
