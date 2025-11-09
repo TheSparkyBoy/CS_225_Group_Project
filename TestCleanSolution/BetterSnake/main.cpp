@@ -21,7 +21,7 @@ using namespace std;
 #define HEIGHT 20
 #define GRID_SZ 24
 #define MAX_FRUITS 10
-#define GAME_SPEED 200 //ms
+#define GAME_SPEED 100 //ms
 
 typedef struct {
 	SDL_Window* window;

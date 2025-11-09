@@ -7,3 +7,12 @@
  * Version:  1.0 Nov 9, 2025
  * Resources: NA
  *******************************************************************************/
+
+#include "GameOver.hpp"
+#include <fstream>
+#include <iostream>
+using namespace std;
+
+void GameOver::recordToFile(int score) {
+
+}

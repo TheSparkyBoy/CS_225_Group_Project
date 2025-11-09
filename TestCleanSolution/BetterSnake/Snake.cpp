@@ -60,15 +60,15 @@
 	int Snake::getLength() const { return length; }
 
 	void Snake::setDirection(int dir) {
-		if (dir % 2 == direction % 2) {
+		if (dir == STOP || direction == STOP) {
+			direction = STOP;
+		}else if (dir % 2 == direction % 2) {
 			direction = direction;
 		}
 		else {
 			direction = dir;
 		}
-		if (dir == STOP) {
-			direction = STOP;
-		}
+
 	}
 
 	int Snake::getDirection() const {
