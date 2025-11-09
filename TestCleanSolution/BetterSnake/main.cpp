@@ -53,7 +53,6 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 }
 
 SDL_AppResult key_press(Snake* s, SDL_Scancode key) {
-	bool collision = false;
 	switch (key) {
 	case SDL_SCANCODE_ESCAPE:
 	case SDL_SCANCODE_Q:
@@ -61,27 +60,26 @@ SDL_AppResult key_press(Snake* s, SDL_Scancode key) {
 	case SDL_SCANCODE_R:
 		delete s;
 		s = new Snake(WIDTH / 2, HEIGHT / 2);
+		s->createNewSegment();
+		s->createNewSegment();
 		break;
 	case SDL_SCANCODE_RIGHT:
 	case SDL_SCANCODE_D:
-		collision = s->moveSnake(RIGHT, WIDTH, HEIGHT);
+		s->setDirection(RIGHT);
 		break;
 	case SDL_SCANCODE_DOWN:
 	case SDL_SCANCODE_S:
-		collision = s->moveSnake(DOWN, WIDTH, HEIGHT);
+		s->setDirection(DOWN);
 		break;
 	case SDL_SCANCODE_LEFT:
 	case SDL_SCANCODE_A:
-		collision = s->moveSnake(LEFT, WIDTH, HEIGHT);
+		s->setDirection(LEFT);
 		break;
 	case SDL_SCANCODE_UP:
 	case SDL_SCANCODE_W:
-		collision = s->moveSnake(UP, WIDTH, HEIGHT);
+		s->setDirection(UP);
 		break;
 	}
-	if (collision == true)
-		return SDL_APP_SUCCESS;
-	else
 		return SDL_APP_CONTINUE;
 }
 
@@ -107,11 +105,15 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	r.w = r.h = GRID_SZ;
 	int sfill;
 	int numFruits = rand() % MAX_FRUITS;
+	bool collision = false;
 
 	//Randomly add fruits
 	if (as->f.size() < numFruits) {
 		as->f.push_back(Fruit(WIDTH, HEIGHT, *as->s, 1, rand()%255 + 1, rand()%255 + 1, rand()%255 + 1, SDL_ALPHA_OPAQUE));
 	}
+
+	//Move snake
+	collision = as->s->moveSnake(as->s->getDirection(), WIDTH, HEIGHT);
 
 	SDL_SetRenderDrawColor(as->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(as->renderer);
@@ -122,7 +124,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 			sfill = as->s->checkCoords(i, j);
 
 			//If at this coordinate the are more than one segment, then game ends
-			if (sfill > 1) {
+			if (sfill > 1 || collision) {
 				SDL_SetRenderDrawColor(as->renderer, 255, 0, 0, 5);
 				SDL_RenderClear(as->renderer);
 				SDL_RenderPresent(as->renderer);

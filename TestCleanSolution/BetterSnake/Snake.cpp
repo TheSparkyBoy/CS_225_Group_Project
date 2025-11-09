@@ -35,13 +35,17 @@
 		}
 		switch (direction) {
 		case UP:
-			addXY(0, 1);
+			addXY(0, -1);
+			break;
 		case RIGHT:
 			addXY(1, 0);
+			break;
 		case DOWN:
-			addXY(0, -1);
+			addXY(0, 1);
+			break;
 		case LEFT:
 			addXY(-1, 0);
+			break;
 		}
 		
 		if (checkCoords(getX(), getY()) > 1) {
@@ -53,7 +57,14 @@
 	}
 
 	Snake::~Snake() {
-	
 		std::cout << "Oops! Your snake ate itself! Length: " << length << ".\n"; // Print score statement.
 	}
 	int Snake::getLength() const { return length; }
+
+	void Snake::setDirection(int dir) {
+		direction = dir;
+	}
+
+	int Snake::getDirection() const {
+		return direction;
+	}

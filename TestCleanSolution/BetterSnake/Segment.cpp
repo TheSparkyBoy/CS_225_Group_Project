@@ -72,8 +72,12 @@ bool Segment::outOfBounds(int width, int height) {
 		isOut = true;
 	if (isOut)
 		return isOut;
-	if (next != NULL)
+	if (next != NULL) {
 		return isOut || next->outOfBounds(width, height);
+	}
+	else {
+		return isOut;
+	}
 }
 	
 Segment::~Segment() {

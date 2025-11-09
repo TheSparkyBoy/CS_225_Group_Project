@@ -23,4 +23,6 @@ public:
 	bool moveSnake(int dir, int w, int h);
 	~Snake();
 	int getLength() const;
+	void setDirection(int dir);
+	int getDirection() const;
 };
