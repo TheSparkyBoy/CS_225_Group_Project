@@ -76,9 +76,9 @@ int Snake::getLength() const { return length; }
 // - STOP overrides everything
 // - cannot reverse direction immediately (prevents 180-degree turn)
 void Snake::setDirection(int dir) {
-	if (dir == STOP || direction == STOP) {
+	if (dir == STOP) {
 		direction = STOP;
-	} else if (dir % 2 == direction % 2) {
+	} else if (dir % 2 == direction % 2 || direction == STOP) {
 		// same axis (e.g. LEFT/RIGHT or UP/DOWN) => ignore to prevent reversing into itself
 		direction = direction;
 	}

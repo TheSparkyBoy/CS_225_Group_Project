@@ -31,6 +31,7 @@ Segment::Segment(int x, int y) {
 
 void Segment::createNewSegment(int dir) {
 	// If not a tail, propagate the create operation to the next segment
+	
 	if (next != NULL) {
 		next->createNewSegment(dir); // Call this function on the next segment
 	}
@@ -58,10 +59,13 @@ void Segment::addXY(int x, int y) {
 	int b = this->y; // old y
 
 	// Move only in one axis to avoid diagonal movement
-	if (x != 0)
-		this->x += x;
-	else
-		this->y += y;
+	if (this->x + x == next->getX() && this->y + y == next->getY()) {/*Do nothing*/ }
+	else {
+		if (x != 0)
+			this->x += x;
+		else
+			this->y += y;
+	}
 
 	// Propagate previous head location to the next segment so the body follows
 	if (next != NULL)

@@ -19,8 +19,8 @@ using namespace std;
 
 #define WIDTH 20
 #define HEIGHT 20
-#define GRID_SZ 24
-#define MAX_FRUITS 10
+#define GRID_SZ 40
+#define MAX_FRUITS 5
 #define GAME_SPEED 100 //ms
 
 // Application state stored and passed to SDL callbacks.
@@ -57,7 +57,7 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 	SDL_SetRenderLogicalPresentation(as->renderer, WIDTH * GRID_SZ, HEIGHT * GRID_SZ, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 	// Create the snake centered on the grid and give it two extra segments
-	as->s = new Snake(WIDTH / 2, HEIGHT / 2);
+	as->s = new Snake(WIDTH / 4, HEIGHT / 2);
 	as->s->createNewSegment();
 	as->s->createNewSegment();
 
@@ -75,7 +75,7 @@ SDL_AppResult key_press(Snake*& s, SDL_Scancode key) {
 	case SDL_SCANCODE_R:
 		// Reset the snake: free old and allocate a fresh one centered on the grid.
 		delete s;
-		s = new Snake(WIDTH / 2, HEIGHT / 2);
+		s = new Snake(WIDTH / 4, HEIGHT / 2);
 		s->createNewSegment();
 		s->createNewSegment();
 		break;
@@ -134,7 +134,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	// Randomly add fruits (simple heuristic: push a fruit if we currently have fewer fruits than a newly chosen target)
 	// This keeps fruit count dynamic but bounded by MAX_FRUITS.
 	if (as->f.size() < numFruits) {
-		as->f.push_back(Fruit(WIDTH, HEIGHT, *as->s, 1, rand()%255 + 1, rand()%255 + 1, rand()%255 + 1, SDL_ALPHA_OPAQUE));
+		as->f.push_back(Fruit(WIDTH, HEIGHT, *as->s, 1, 255 - rand()%50, rand()%50, rand()%50, SDL_ALPHA_OPAQUE));
 	}
 
 	// Move the snake according to its current direction; if collision occurs the snake will be set to STOP downstream
