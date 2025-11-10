@@ -59,17 +59,20 @@ void Segment::addXY(int x, int y) {
 	int b = this->y; // old y
 
 	// Move only in one axis to avoid diagonal movement
-	if (this->x + x == next->getX() && this->y + y == next->getY()) {/*Do nothing*/ }
-	else {
+
 		if (x != 0)
 			this->x += x;
 		else
 			this->y += y;
-	}
 
+		if (next != NULL && this->x == next->getX() && this->y == next->getY()) {
+			this->x = a;
+			this->y = b;
+		}
+		else if (next != NULL)
+			next->updateXY(a, b);
 	// Propagate previous head location to the next segment so the body follows
-	if (next != NULL)
-		next->updateXY(a, b);
+		
 }
 
 int Segment::checkCoords(int a, int b) {

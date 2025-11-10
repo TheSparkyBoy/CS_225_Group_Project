@@ -34,7 +34,25 @@ void Snake::createNewSegment() {
 // Returns true if the snake collided with itself or went out of bounds.
 bool Snake::moveSnake(int w, int h) {
 	bool hasCollided = false;
+	switch (direction) {
+	case UP:
+		if (this->getY() - 1 == next->getY())
+			direction = DOWN;
+		break;
+	case LEFT:
+		if (this->getX() - 1 == next->getX())
+			direction = RIGHT;
+		break;
+	case DOWN:
+		if (this->getY() + 1 == next->getY())
+			direction = UP;
+		break;
+	case RIGHT:
+		if (this->getX() + 1 == next->getX())
+			direction = LEFT;
+		break;
 
+	}
 	// Move according to direction enum
 	switch (direction) {
 	case UP:
