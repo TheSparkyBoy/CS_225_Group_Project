@@ -20,7 +20,7 @@ using namespace std;
 #define WIDTH 20
 #define HEIGHT 20
 #define GRID_SZ 40
-#define MAX_FRUITS 5
+#define MAX_FRUITS 10
 #define GAME_SPEED 100 //ms
 
 // Application state stored and passed to SDL callbacks.

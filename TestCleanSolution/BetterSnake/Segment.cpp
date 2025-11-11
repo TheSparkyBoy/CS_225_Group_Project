@@ -65,11 +65,12 @@ void Segment::addXY(int x, int y) {
 		else
 			this->y += y;
 
+		//This prevents the snake from directly reversing into itself via two acceptable inputs per game interval
 		if (next != NULL && this->x == next->getX() && this->y == next->getY()) {
-			this->x = a;
+			this->x = a; //Revert head coordinates to old coordinates and do not update following segments
 			this->y = b;
 		}
-		else if (next != NULL)
+		else if (next != NULL)  //Else if there were no problems with input, update the following segments
 			next->updateXY(a, b);
 	// Propagate previous head location to the next segment so the body follows
 		
@@ -91,19 +92,19 @@ int Segment::checkCoords(int a, int b) {
 bool Segment::outOfBounds(int width, int height) {
 	// Determine if this segment is outside the grid rectangle
 	bool isOut = false;
-	if (x < 0 || x >= width)
+	if (x < 0 || x >= width) // out of bounds on left or right
 		isOut = true;
-	if (y < 0 || y >= height)
+	if (y < 0 || y >= height) // out of bounds on top or bottom
 		isOut = true;
 
 	// If this segment is out of bounds return true, otherwise check remaining segments
-	if (isOut)
+	if (isOut && next != NULL) // see below for next == NULL
 		return isOut;
-	if (next != NULL) {
+	else if (next != NULL) {
 		return isOut || next->outOfBounds(width, height);
 	}
-	else {
-		return isOut;
+	else { // next == NULL this is the tail segment
+		return false; //Do not count the tail segment as out-of-bounds because it could be created out of bounds in some cases
 	}
 }
 
