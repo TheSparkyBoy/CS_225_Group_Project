@@ -190,8 +190,15 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 
 		// If snake head is on the fruit, grow snake and remove the fruit from the vector
 		if (fruit.getX() == as->s->getX() && fruit.getY() == as->s->getY()) {
-			// Grow by adding a new tail segment
-			as->s->createNewSegment();
+			try {
+				// Grow by adding a new tail segment
+				as->s->createNewSegment();
+			}
+
+			catch (...) {
+				std::cout << "Could not allocate memory for new Segment" << std::endl;
+				return SDL_APP_SUCCESS;
+			}
 			// Remove fruit safely and step index back to account for vector shift
 			as->f.erase(as->f.begin() + i);
 			--i; // Decrement i to keep iterating the remaining fruits correctly

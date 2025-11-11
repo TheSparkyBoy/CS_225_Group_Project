@@ -32,25 +32,26 @@ Segment::Segment(int x, int y) {
 void Segment::createNewSegment(int dir) {
 	// If not a tail, propagate the create operation to the next segment
 	
-	if (next != NULL) {
-		next->createNewSegment(dir); // Call this function on the next segment
-	}
-	else { // Reached tail: create a new segment adjacent to the current tail based on movement direction
-		switch (dir) {
-		case UP:
-			next = new Segment(x, y - 1);
-			break;
-		case RIGHT:
-			next = new Segment(x - 1, y);
-			break;
-		case DOWN:
-			next = new Segment(x, y + 1);
-			break;
-		case LEFT:
-			next = new Segment(x + 1, y);
-			break;
+		if (next != NULL) {
+			next->createNewSegment(dir); // Call this function on the next segment
 		}
-	}
+
+		else { // Reached tail: create a new segment adjacent to the current tail based on movement direction
+			switch (dir) {
+			case UP:
+				next = new Segment(x, y - 1);
+				break;
+			case RIGHT:
+				next = new Segment(x - 1, y);
+				break;
+			case DOWN:
+				next = new Segment(x, y + 1);
+				break;
+			case LEFT:
+				next = new Segment(x + 1, y);
+				break;
+			}
+		}
 }
 
 void Segment::addXY(int x, int y) {
