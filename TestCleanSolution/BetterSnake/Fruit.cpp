@@ -14,8 +14,8 @@
 // - initialize color bytes and growth coefficient
 Fruit::Fruit(int w, int h, Snake& snk, int f,  char r, char g, char b, char alpha) :gc(f) {
 	do {
-		x = rand() % w + 1;
-		y = rand() % h + 1;
+		x = rand() % w; //grid is indexed (0, w -1). This returns a number in that range.
+		y = rand() % h; // 
 	} while (snk.checkCoords(x, y) > 0); // avoid spawning on the snake
 	cv[0] = r; cv[1] = g; cv[2] = b; cv[3] = alpha;
 }
