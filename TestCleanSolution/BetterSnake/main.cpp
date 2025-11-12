@@ -4,6 +4,7 @@
  * Purpose:	Implements the snake class and supporting functions to the segments.
  * Version:  1.0 Nov 8, 2025
  * Resources: GitHub Copilot for comment generation
+ *			  Simple DirectMedia Layer (SDL) 3.2.26 - available under the zlib license
  *******************************************************************************/
 
 #define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
@@ -17,11 +18,11 @@
 
 using namespace std;
 
-#define WIDTH 20
-#define HEIGHT 20
-#define GRID_SZ 40
-#define MAX_FRUITS 3
-#define GAME_SPEED 100 //ms
+#define WIDTH 20 //Width of the game grid in "blocks"
+#define HEIGHT 20 // Height of the game grid in "blocks"
+#define GRID_SZ 40 //Size of each grid block in pixels
+#define MAX_FRUITS 3 // Maximum number of fruits that can spawn at any time
+#define GAME_SPEED 100 // number of milliseconds inbetween update steps
 
 // Application state stored and passed to SDL callbacks.
 // Holds window/rendering pointers, the current snake, active fruits and game over helper.
