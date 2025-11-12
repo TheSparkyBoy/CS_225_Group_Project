@@ -34,7 +34,8 @@ void Snake::createNewSegment() {
 // Returns true if the snake collided with itself or went out of bounds.
 bool Snake::moveSnake(int w, int h) {
 	bool hasCollided = false;
-	switch (direction) {
+	switch (direction) { //This switch statement detects if the requested direction is opposite the current direction
+		// and prevents the snake from reversing into itself.
 	case UP:
 		if (this->getY() - 1 == next->getY())
 			direction = DOWN;
@@ -54,9 +55,10 @@ bool Snake::moveSnake(int w, int h) {
 
 	}
 	// Move according to direction enum
-	switch (direction) {
+	switch (direction) { // Note that the coordinate system origin (0,0) is in the top left corner of the window
+		// with the y-axis pointing down. Therefore moving up is a "negative" change in y.
 	case UP:
-		addXY(0, -1);
+		addXY(0, -1); 
 		break;
 	case RIGHT:
 		addXY(1, 0);
@@ -73,30 +75,31 @@ bool Snake::moveSnake(int w, int h) {
 	}
 
 	// If more than one segment occupies the head coordinate it's a self-collision.
-	if (checkCoords(getX(), getY()) > 1) {
+	if (checkCoords(getX(), getY()) > 1) { //See Segment.cpp for implementation
 		hasCollided = true;
+		return hasCollided; //No need to perform boundary checking, snake is already "dead".
 	}
-	else
+	else {
 		// Otherwise check for out-of-bounds
-		hasCollided = outOfBounds(w, h);
-
+		hasCollided = outOfBounds(w, h); //see Segment.cpp for implementation
+	}
 	return hasCollided;
 }
 
 Snake::~Snake() {
-	// Print score on destruction (this is the current behavior)
+	// Print score on destruction of the snake, which occurs at restart or app quit.
 	std::cout << "Oops! Your snake ate itself! Length: " << length << ".\n";
 }
 
-int Snake::getLength() const { return length; }
+int Snake::getLength() const { return length; } //getter function for scoring
 
 // setDirection enforces simple rules:
 // - STOP overrides everything
 // - cannot reverse direction immediately (prevents 180-degree turn)
 void Snake::setDirection(int dir) {
-	if (dir == STOP) {
+	if (dir == STOP) { //Stop overrides other direction requests
 		direction = STOP;
-	} else if (dir % 2 == direction % 2 || direction == STOP) {
+	} else if (dir % 2 == direction % 2 || direction == STOP) { // direction == STOP prevents the snake from moving after death
 		// same axis (e.g. LEFT/RIGHT or UP/DOWN) => ignore to prevent reversing into itself
 		direction = direction;
 	}
@@ -105,6 +108,6 @@ void Snake::setDirection(int dir) {
 	}
 }
 
-int Snake::getDirection() const {
+int Snake::getDirection() const { //getter  function for direction
 	return direction;
 }

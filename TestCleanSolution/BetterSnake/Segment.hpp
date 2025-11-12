@@ -27,6 +27,9 @@ enum {
  * Segment represents one cell of the snake. Segments are linked using the
  * protected pointer 'next' so the Snake/Segment implementation forms a linked list
  * from head to tail.
+ * 
+ * The Segment class implements movement on the grid and provides
+ * functions capable of iterating through the linked list for growth or collision detection
  */
 class Segment {
 private:

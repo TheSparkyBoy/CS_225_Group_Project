@@ -27,7 +27,7 @@ public:
 	// Construct a snake with its head at (x,y). Initial length = 1 (head only)
 	Snake(int x, int y);
 
-	// Grow the snake by adding a new segment at the tail
+	// This overrides the createNewSegment virtual function in Segment class in order to increment the length counter
 	void createNewSegment();
 
 	// Move the snake one step in its current direction. Returns true if a collision occurred.

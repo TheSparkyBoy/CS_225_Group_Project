@@ -8,6 +8,7 @@
 
 #include "Segment.hpp"
 
+
 // Implementation notes:
 // - Each Segment object owns a pointer to the next Segment in the snake (tail direction).
 // - updateXY, createNewSegment, addXY and checkCoords walk/modify that linked list.
@@ -66,7 +67,11 @@ void Segment::addXY(int x, int y) {
 		else
 			this->y += y;
 
-		//This prevents the snake from directly reversing into itself via two acceptable inputs per game interval
+		/*This prevents the snake from directly reversing into itself via two acceptable inputs per game interval 
+		 * Ex: If heading RIGHT, and inputs UP and LEFT are handled in succession within one game tick, 
+		 * The reversal prevention in setDirection() is bypassed and this block of code becomes necessary.
+		 */
+		
 		if (next != NULL && this->x == next->getX() && this->y == next->getY()) {
 			this->x = a; //Revert head coordinates to old coordinates and do not update following segments
 			this->y = b;
@@ -110,7 +115,7 @@ bool Segment::outOfBounds(int width, int height) {
 }
 
 Segment::~Segment() {
-	// Recursively delete the next segment(s) to free the entire linked list
+	// When this segment is deleted, delete the next segment as well so the entire list is freed.
 	if (next != NULL) {
 		delete next;
 		next = NULL;

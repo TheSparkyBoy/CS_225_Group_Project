@@ -13,6 +13,7 @@
  * Fruit represents a consumable item placed on the grid.
  * - x,y: coordinates on the grid
  * - gc: growth coefficient (how much the snake should grow/shrink on consumption)
+ *	- This represents an area for future feature development. Like "poison fruits" that shrink the snake or have other effects
  * - cv: color/alpha bytes [R,G,B,alpha]
  *
  * The constructor ensures fruit does not spawn on the snake by querying snk.checkCoords.
