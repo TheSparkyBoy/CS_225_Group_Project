@@ -16,3 +16,10 @@ using namespace std;
 void GameOver::recordToFile(int score) {
 
 }
+
+
+std::ostream& operator<<(std::ostream& out, Snake& s) {
+	out << "Score: " << s.getLength() << "\n";
+	return out;
+}
+

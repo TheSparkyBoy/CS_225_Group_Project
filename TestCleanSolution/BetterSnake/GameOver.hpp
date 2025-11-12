@@ -6,12 +6,14 @@
  * Resources: GitHub Copilot for comment generation
  *******************************************************************************/
 #include <string>
-
+#include "Snake.hpp"
 using namespace std;
 
 class GameOver {
+	friend std::ostream& operator<<(std::ostream& out, Snake& s);
 private:
 	string FileName;
+	Snake& s;
 
 public:
 	void recordToFile(int score);
