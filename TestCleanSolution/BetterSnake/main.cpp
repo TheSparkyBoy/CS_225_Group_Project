@@ -33,10 +33,10 @@ typedef struct {
 	GameOver go;        // helper for recording game over/score
 } Appstate;
 
-// SDL_AppInit: called once by SDL at startup to initialize app-level resources.
-// - allocates and initializes Appstate
-// - creates SDL window and renderer
-// - spawns initial snake segments
+/* SDL_AppInit: called once by SDL at startup to initialize app - level resources.
+	 - allocates and initializes Appstate
+	 - creates SDL window and renderer
+	 - spawns initial snake segments*/
 SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 	srand(time(NULL));
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK))
@@ -75,7 +75,18 @@ SDL_AppResult key_press(Snake*& s, SDL_Scancode key) {
 	case SDL_SCANCODE_R:
 		// Reset the snake: free old and allocate a fresh one centered on the grid.
 		delete s;
-		s = new Snake(WIDTH / 4, HEIGHT / 2);
+		try {
+			s = new Snake(WIDTH / 4, HEIGHT / 2);
+			if (s == NULL) {
+				throw "The new snake was not created successfully";
+			}
+		}
+		catch (const char* m) {
+			//End the function if new snake wasn't created successfully
+			cout << m << endl;
+			return SDL_APP_SUCCESS;
+		}
+
 		s->createNewSegment();
 		s->createNewSegment();
 		break;
@@ -116,11 +127,11 @@ SDL_AppResult SDL_AppEvent(void* apstate, SDL_Event* event) {
 	return SDL_APP_CONTINUE;
 }
 
-// SDL_AppIterate: main per-frame (or per-iteration) update + draw.
-// - may spawn fruits randomly
-// - moves the snake
-// - renders the grid: segments, fruits and head
-// - handles fruit consumption and removal
+/* SDL_AppIterate: main per - frame(or per - iteration) update + draw.
+	 - may spawn fruits randomly
+	 - moves the snake
+	 - renders the grid: segments, fruits and head
+	 - handles fruit consumption and removal*/
 SDL_AppResult SDL_AppIterate(void* appstate) {
 
 	Appstate* as = static_cast<Appstate*>(appstate);
