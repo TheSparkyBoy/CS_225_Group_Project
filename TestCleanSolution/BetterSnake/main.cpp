@@ -20,7 +20,7 @@ using namespace std;
 #define WIDTH 20
 #define HEIGHT 20
 #define GRID_SZ 40
-#define MAX_FRUITS 10
+#define MAX_FRUITS 3
 #define GAME_SPEED 100 //ms
 
 // Application state stored and passed to SDL callbacks.
@@ -129,11 +129,10 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	SDL_FRect r;
 	r.w = r.h = GRID_SZ;
 	int sfill;
-	int numFruits = rand() % MAX_FRUITS;
 
 	// Randomly add fruits (simple heuristic: push a fruit if we currently have fewer fruits than a newly chosen target)
 	// This keeps fruit count dynamic but bounded by MAX_FRUITS.
-	if (as->f.size() < numFruits) {
+	if (as->f.size() < MAX_FRUITS) {
 		as->f.push_back(Fruit(WIDTH, HEIGHT, *as->s, 1, 255 - rand()%50, rand()%50, rand()%50, SDL_ALPHA_OPAQUE));
 	}
 
