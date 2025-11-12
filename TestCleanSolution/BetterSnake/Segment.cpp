@@ -52,6 +52,8 @@ void Segment::createNewSegment(int dir) {
 				next = new Segment(x + 1, y);
 				break;
 			}
+			if (next == NULL)
+				throw 1;
 		}
 }
 

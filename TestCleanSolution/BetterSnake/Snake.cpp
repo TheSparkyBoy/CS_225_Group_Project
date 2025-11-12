@@ -27,6 +27,8 @@ void Snake::createNewSegment() {
 	else { // Reached tail: place a new segment immediately behind the tail based on direction
 		// Place new tail one cell behind current tail position
 		next = new Segment(getX() - 1, this->getY());
+		if (next == NULL)
+			throw 1;
 	}
 }
 
