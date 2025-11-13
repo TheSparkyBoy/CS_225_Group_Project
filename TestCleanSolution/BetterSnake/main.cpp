@@ -61,9 +61,18 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 	SDL_SetRenderLogicalPresentation(as->renderer, WIDTH * GRID_SZ, HEIGHT * GRID_SZ, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 	// Create the snake centered on the grid and give it two extra segments
-	as->s = new Snake(WIDTH / 4, HEIGHT / 2);
-	as->s->createNewSegment();
-	as->s->createNewSegment();
+	try {
+		as->s = new Snake(WIDTH / 4, HEIGHT / 2);
+		if (as->s == NULL)
+			throw "Could not allocate memory for snake";
+		else {
+			as->s->createNewSegment();
+			as->s->createNewSegment();
+		}
+	}
+	catch (const char* s) {
+		cout << s << endl;
+	}
 
 	return SDL_APP_CONTINUE;
 }
@@ -84,15 +93,16 @@ SDL_AppResult key_press(Snake*& s, SDL_Scancode key) {
 			if (s == NULL) {
 				throw "The new snake was not created successfully";
 			}
+			else {
+				s->createNewSegment();
+				s->createNewSegment();
+			}
 		}
 		catch (const char* m) {
 			//End the function if new snake wasn't created successfully
 			cout << m << endl;
 			return SDL_APP_SUCCESS;
 		}
-
-		s->createNewSegment();
-		s->createNewSegment();
 		break;
 	case SDL_SCANCODE_RIGHT:
 	case SDL_SCANCODE_D:
@@ -214,8 +224,8 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 				as->s->createNewSegment();
 			}
 
-			catch (...) {
-				std::cout << "Could not allocate memory for new Segment" << std::endl;
+			catch (const char* s) {
+				cout << s << endl;
 				return SDL_APP_SUCCESS;
 			}
 			// Remove fruit safely and step index back to account for vector shift
