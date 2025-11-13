@@ -8,7 +8,6 @@
 #pragma once
 #include "Segment.hpp"
 #include <iostream>
-#include <string>
 
 /*
  * Snake extends Segment to represent the player-controlled snake head.

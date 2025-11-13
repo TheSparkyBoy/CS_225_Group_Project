@@ -27,8 +27,11 @@ private:
 
 public:
 	// Create a fruit within width (w) x height (h) that does not overlap the provided snake.
+
 	// Default color is red (255,0,0) and opaque. 
 	Fruit(int w, int h, Snake& snk, int f = 1, char r = 255, char g = 0, char b = 0, char alpha = 255);
+
+
 
 	// Return the RGBA component (index 0..3)
 	char getRGBA(int i) const;

@@ -16,7 +16,6 @@ Snake::Snake(int x, int y): Segment(x,y) {
 	direction = RIGHT; // default starting direction
 }
 
-
 // Append a new segment to the tail of the snake.
 // This increments the logical length and either delegates to the existing
 // tail or creates the first tail segment adjacent to current tail.
