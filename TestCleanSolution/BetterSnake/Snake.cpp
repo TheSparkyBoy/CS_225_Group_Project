@@ -6,6 +6,8 @@
  * Resources: GitHub Copilot for comment generation
  *******************************************************************************/
 #include "Snake.hpp"
+#include <time.h>
+//#pragma warning(disable : 4996)
 
 // NOTE: length and direction are member variables of Snake declared in Snake.hpp.
 // The implementation uses the Segment linked-list behavior inherited from Segment.
@@ -112,4 +114,17 @@ void Snake::setDirection(int dir) {
 
 int Snake::getDirection() const { //getter  function for direction
 	return direction;
+}
+
+ostream& operator<<(ostream& os, const Snake& s) {
+	time_t t = (time(NULL) - 25200);
+	struct tm gmt;
+	char timeStr[26];
+
+	gmtime_s(&gmt, &t);
+	asctime_s(timeStr, sizeof(timeStr), &gmt);
+
+	os << s.getLength() << "," << timeStr;
+
+	return os;
 }

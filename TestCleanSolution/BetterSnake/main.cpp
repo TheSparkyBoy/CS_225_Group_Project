@@ -32,6 +32,7 @@ typedef struct {
 	Snake* s;           // pointer to the snake head object
 	vector<Fruit> f;    // active fruits on the field
 	GameOver go;        // helper for recording game over/score
+	bool loggedScore;
 } Appstate;
 
 /* SDL_AppInit: called once by SDL at startup to initialize app - level resources.
@@ -39,6 +40,7 @@ typedef struct {
 	 - creates SDL window and renderer
 	 - spawns initial snake segments*/
 SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
+
 	srand(time(NULL));
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK))
 		return SDL_APP_FAILURE;
@@ -49,6 +51,7 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 	}
 
 	*apstate = as;
+	as->loggedScore = false;
 
 	// Create window + renderer sized to the logical grid
 	if (!SDL_CreateWindowAndRenderer("Better Snake", WIDTH * GRID_SZ, HEIGHT * GRID_SZ, 0, &as->window, &as->renderer))
@@ -157,7 +160,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	// Clear screen to black
 	SDL_SetRenderDrawColor(as->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(as->renderer);
-
+	as->loggedScore = false;
 	// Draw all segments by scanning the grid and asking the snake how many segments are at each coordinate.
 	// Using checkCoords makes overlapping / self-collision detection easy.
 	for (int i = 0; i < WIDTH; ++i) {
@@ -172,8 +175,13 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 			if (sfill == 0 && as->s->getDirection() == STOP) {
 				SDL_SetRenderDrawColor(as->renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
 				// Record game-over score to file (GameOver helper)
-				as->go.recordToFile(as->s->getLength());
+				if (!as->loggedScore) {
+					as->go.recordToFile(as->s);
+					as->go.displayHighScore();
+					as->loggedScore = true;
+				}
 			}
+
 			else {
 				// Default background color for empty cells
 				SDL_SetRenderDrawColor(as->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);

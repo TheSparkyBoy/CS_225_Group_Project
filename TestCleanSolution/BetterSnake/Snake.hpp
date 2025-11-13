@@ -8,6 +8,7 @@
 #pragma once
 #include "Segment.hpp"
 #include <iostream>
+using namespace std;
 
 /*
  * Snake extends Segment to represent the player-controlled snake head.
@@ -44,4 +45,7 @@ public:
 
 	// Read current direction
 	int getDirection() const;
+
+	// Overloaded insertion operator
+	friend ostream& operator<<(ostream& os, const Snake& s);
 };

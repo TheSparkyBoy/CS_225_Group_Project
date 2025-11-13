@@ -6,8 +6,7 @@
  * Resources: GitHub Copilot for comment generation
  *******************************************************************************/
 #pragma once
-#ifndef GAMEOVER_HPP
-#define GAMEOVER_HPP
+#include "Snake.hpp"
 #include <string>
 
 
@@ -16,8 +15,7 @@ using namespace std;
 class GameOver {
 private:
 	string FileName;
-
 public:
-	void recordToFile(int score);
+	void recordToFile(Snake* s);
+	void displayHighScore();
 };
-#endif
