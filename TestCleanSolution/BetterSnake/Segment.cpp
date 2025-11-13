@@ -53,7 +53,7 @@ void Segment::createNewSegment(int dir) {
 				break;
 			}
 			if (next == NULL)
-				throw 1;
+				throw "Could not allocate memory for new segment";
 		}
 }
 
