@@ -5,8 +5,13 @@
  * Version:  1.0 Nov 9, 2025
  * Resources: GitHub Copilot for comment generation
  *******************************************************************************/
+#pragma once
+#ifndef GAMEOVER_HPP
+#define GAMEOVER_HPP
 #include <string>
 #include "Snake.hpp"
+
+
 using namespace std;
 
 class GameOver {
@@ -18,3 +23,4 @@ private:
 public:
 	void recordToFile(int score);
 };
+#endif

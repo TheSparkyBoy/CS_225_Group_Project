@@ -9,9 +9,13 @@
 #include <cstdlib>
 #include "Fruit.hpp"
 
-// Fruit constructor:
-// - randomly place fruit within [1..w] and [1..h] until a free cell (not occupied by the snake) is found
-// - initialize color bytes and growth coefficient
+/* Fruit constructor :
+ * randomly place fruit within [1..w] and [1..h] until a free cell (not occupied by the snake) is found
+ * initialize color bytes and growth coefficient
+ * Inputs: Width of the grid (w), Height of the grid (h), a Snake Reference (snk),
+ * and 4 characters for the [R,G,B] color values and the alpha (opacity)
+ */
+
 Fruit::Fruit(int w, int h, Snake& snk, int f,  char r, char g, char b, char alpha) :gc(f) {
 	do {
 		x = rand() % w; //grid is indexed (0, w -1). This returns a number in that range.
@@ -21,7 +25,7 @@ Fruit::Fruit(int w, int h, Snake& snk, int f,  char r, char g, char b, char alph
 }
 
 // Accessors
-char Fruit::getRGBA(int i) const { return cv[i]; };
-int Fruit::getGC() const { return gc; };
+char Fruit::getRGBA(int i) const { return cv[i]; }; // Get [R,G,B, or alpha] depending on provided index
+int Fruit::getGC() const { return gc; }; 
 int Fruit::getX() const { return x; };
 int Fruit::getY() const { return y; };
