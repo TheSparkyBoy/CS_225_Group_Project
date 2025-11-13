@@ -124,7 +124,7 @@ ostream& operator<<(ostream& os, const Snake& s) {
 	gmtime_s(&gmt, &t);
 	asctime_s(timeStr, sizeof(timeStr), &gmt);
 
-	os << s.getLength() << "," << timeStr;
+	os <<"Score: " << s.getLength() << "\ton: " << timeStr;
 
 	return os;
 }

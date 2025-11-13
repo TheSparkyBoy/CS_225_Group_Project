@@ -10,6 +10,7 @@
 
 #include "GameOver.hpp"
 #include "Snake.hpp"
+#include "Segment.hpp"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -19,6 +20,7 @@ using namespace std;
 void GameOver::recordToFile(Snake* s) {
 	fstream scoreFile("scores.txt", ios::app);
 	scoreFile << *s;
+    scoreFile.close();
 }
 
 void GameOver::displayHighScore() {

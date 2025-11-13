@@ -11,6 +11,7 @@
 #pragma	once
 #include "Snake.hpp"
 #include "Fruit.hpp"
+#include "Segment.hpp"
 #include "GameOver.hpp"
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL.h>

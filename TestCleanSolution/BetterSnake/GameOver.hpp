@@ -6,6 +6,8 @@
  * Resources: GitHub Copilot for comment generation
  *******************************************************************************/
 #pragma once
+#ifndef GAMEOVER_HPP
+#define GAMEOVER_HPP
 #include "Snake.hpp"
 #include <string>
 
@@ -19,3 +21,4 @@ public:
 	void recordToFile(Snake* s);
 	void displayHighScore();
 };
+#endif
