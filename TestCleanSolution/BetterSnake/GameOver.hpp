@@ -17,7 +17,10 @@ using namespace std;
 class GameOver {
 private:
 	string FileName;
+	bool loggedScore = false;
 public:
+	bool getLoggedScore();
+	void setLoggedScore(bool ls);
 	void recordToFile(Snake* s);
 	void displayHighScore();
 };

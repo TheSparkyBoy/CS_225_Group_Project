@@ -91,8 +91,6 @@ bool Snake::moveSnake(int w, int h) {
 }
 
 Snake::~Snake() {
-	// Print score on destruction of the snake, which occurs at restart or app quit.
-	std::cout << "Oops! Your snake ate itself! Length: " << length << ".\n";
 }
 
 int Snake::getLength() const { return length; } //getter function for scoring
@@ -124,7 +122,7 @@ ostream& operator<<(ostream& os, const Snake& s) {
 	gmtime_s(&gmt, &t);
 	asctime_s(timeStr, sizeof(timeStr), &gmt);
 
-	os <<"Score: " << s.getLength() << "\ton: " << timeStr;
-
+	os << s.getLength() << "," << timeStr;
+	cout << "Your score: " << s.getLength() << endl;
 	return os;
 }

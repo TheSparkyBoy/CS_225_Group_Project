@@ -17,17 +17,29 @@
 
 using namespace std;
 
+bool GameOver::getLoggedScore() {
+    return loggedScore;
+}
+
+void GameOver::setLoggedScore(bool ls) {
+    loggedScore = ls;
+}
+
 void GameOver::recordToFile(Snake* s) {
-	fstream scoreFile("scores.txt", ios::app);
-	scoreFile << *s;
-    scoreFile.close();
+    if (!getLoggedScore()) {
+        fstream scoreFile("scores.txt", ios::app);
+        scoreFile << *s;
+        scoreFile.close();
+        displayHighScore();
+        setLoggedScore(true);
+    }
 }
 
 void GameOver::displayHighScore() {
     int highScore = 0;
     string highScoreTime = "00:00:00";
 
-    ifstream file("scores.txt");
+    ifstream file("scores.txt", ios::in);
     string tempLine;
     stringstream ss(tempLine);
 

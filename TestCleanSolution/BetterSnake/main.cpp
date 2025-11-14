@@ -33,7 +33,6 @@ typedef struct {
 	Snake* s;           // pointer to the snake head object
 	vector<Fruit> f;    // active fruits on the field
 	GameOver go;        // helper for recording game over/score
-	bool loggedScore;
 } Appstate;
 
 /* SDL_AppInit: called once by SDL at startup to initialize app - level resources.
@@ -52,7 +51,6 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 	}
 
 	*apstate = as;
-	as->loggedScore = false;
 
 	// Create window + renderer sized to the logical grid
 	if (!SDL_CreateWindowAndRenderer("Better Snake", WIDTH * GRID_SZ, HEIGHT * GRID_SZ, 0, &as->window, &as->renderer))
@@ -80,7 +78,8 @@ SDL_AppResult SDL_AppInit(void** apstate, int argc, char* argv[]) {
 
 // key_press: handle keyboard input that affects the snake
 // Note: receives the Snake pointer by reference so resets replace the pointer held in Appstate.
-SDL_AppResult key_press(Snake*& s, SDL_Scancode key) {
+SDL_AppResult key_press(void *appState, SDL_Scancode key) {
+	Appstate* as = static_cast<Appstate*>(appState);
 	switch (key) {
 	case SDL_SCANCODE_ESCAPE:
 	case SDL_SCANCODE_Q:
@@ -88,15 +87,16 @@ SDL_AppResult key_press(Snake*& s, SDL_Scancode key) {
 		return SDL_APP_SUCCESS;
 	case SDL_SCANCODE_R:
 		// Reset the snake: free old and allocate a fresh one centered on the grid.
-		delete s;
+		as->go.setLoggedScore(false);
+		delete as->s;
 		try {
-			s = new Snake(WIDTH / 4, HEIGHT / 2);
-			if (s == NULL) {
+			as->s = new Snake(WIDTH / 4, HEIGHT / 2);
+			if (as->s == NULL) {
 				throw "The new snake was not created successfully";
 			}
 			else {
-				s->createNewSegment();
-				s->createNewSegment();
+				as->s->createNewSegment();
+				as->s->createNewSegment();
 			}
 		}
 		catch (const char* m) {
@@ -107,19 +107,19 @@ SDL_AppResult key_press(Snake*& s, SDL_Scancode key) {
 		break;
 	case SDL_SCANCODE_RIGHT:
 	case SDL_SCANCODE_D:
-		s->setDirection(RIGHT);
+		as->s->setDirection(RIGHT);
 		break;
 	case SDL_SCANCODE_DOWN:
 	case SDL_SCANCODE_S:
-		s->setDirection(DOWN);
+		as->s->setDirection(DOWN);
 		break;
 	case SDL_SCANCODE_LEFT:
 	case SDL_SCANCODE_A:
-		s->setDirection(LEFT);
+		as->s->setDirection(LEFT);
 		break;
 	case SDL_SCANCODE_UP:
 	case SDL_SCANCODE_W:
-		s->setDirection(UP);
+		as->s->setDirection(UP);
 		break;
 	}
 	return SDL_APP_CONTINUE;
@@ -136,7 +136,7 @@ SDL_AppResult SDL_AppEvent(void* apstate, SDL_Event* event) {
 		break;
 	case SDL_EVENT_KEY_DOWN:
 		// Forward keyboard scancode to input handler (updates as->s when resetting)
-		return key_press(as->s, event->key.scancode);
+		return key_press(as, event->key.scancode);
 		break;
 	}
 	return SDL_APP_CONTINUE;
@@ -171,7 +171,6 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 	// Clear screen to black
 	SDL_SetRenderDrawColor(as->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(as->renderer);
-	as->loggedScore = false;
 	// Draw all segments by scanning the grid and asking the snake how many segments are at each coordinate.
 	// Using checkCoords makes overlapping / self-collision detection easy.
 	for (int i = 0; i < WIDTH; ++i) {
@@ -186,11 +185,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 			if (sfill == 0 && as->s->getDirection() == STOP) {
 				SDL_SetRenderDrawColor(as->renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
 				// Record game-over score to file (GameOver helper)
-				if (!as->loggedScore) {
-					as->go.recordToFile(as->s);
-					as->go.displayHighScore();
-					as->loggedScore = true;
-				}
+				as->go.recordToFile(as->s);
 			}
 
 			else {
@@ -251,6 +246,7 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 void SDL_AppQuit(void* appstate, SDL_AppResult result) {
 	if(appstate != NULL){
 		Appstate* as = static_cast<Appstate*>(appstate);
+		as->go.recordToFile(as->s);
 		SDL_DestroyRenderer(as->renderer);
 		SDL_DestroyWindow(as->window);
 		// Note: GameOver object is a value member and will be destroyed automatically.
