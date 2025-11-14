@@ -10,18 +10,22 @@
 #define GAMEOVER_HPP
 #include "Snake.hpp"
 #include <string>
-
-
 using namespace std;
 
 class GameOver {
-private:
-	string FileName;
-	bool loggedScore = false;
+private: 
+	bool loggedScore = false; // Track if score has been logged in this playthrough
 public:
+	// Getter function for loggedScore flag
 	bool getLoggedScore();
+
+	// Set or clear loggedScore flag
 	void setLoggedScore(bool ls);
+
+	// Record the current score to a file in (score,time) format
 	void recordToFile(Snake* s);
+
+	// Parses scores file to calculate high score and print it along with the time it was achieved
 	void displayHighScore();
 };
 #endif

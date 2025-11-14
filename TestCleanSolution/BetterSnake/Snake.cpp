@@ -114,15 +114,16 @@ int Snake::getDirection() const { //getter  function for direction
 	return direction;
 }
 
+// Overloaded insertion operator
 ostream& operator<<(ostream& os, const Snake& s) {
-	time_t t = (time(NULL) - 25200);
-	struct tm gmt;
-	char timeStr[26];
+	time_t t = (time(NULL) - 25200); // Get unix time and adjust for AZ Time zone
+	struct tm gmt; // Struct to store time in useful units (hr, min, s, etc.)
+	char timeStr[26]; // String buffer (min size is 26)
 
-	gmtime_s(&gmt, &t);
-	asctime_s(timeStr, sizeof(timeStr), &gmt);
+	gmtime_s(&gmt, &t); // Store current time in the struct
+	asctime_s(timeStr, sizeof(timeStr), &gmt); // Convert time to a human readable string
 
-	os << s.getLength() << "," << timeStr;
-	cout << "Your score: " << s.getLength() << endl;
+	os << s.getLength() << "," << timeStr; // Put string in output stream
+	cout << "Your score: " << s.getLength() << endl; // Print score to console
 	return os;
 }
